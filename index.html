@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrbitDeals | Community Promotions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fafc; --card-bg: #ffffff; --text: #0f172a; --text-muted: #64748b;
+            --accent: #2563eb; --border: #e2e8f0; --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --modal-overlay: rgba(15, 23, 42, 0.5);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f172a; --card-bg: #1e293b; --text: #f8fafc; --text-muted: #94a3b8;
+            --accent: #38bdf8; --border: #334155; --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+        }
+
+        [data-theme="cosmic"] {
+            --bg: #05070a; --card-bg: rgba(255, 255, 255, 0.07); --text: #ffffff;
+            --text-muted: #cbd5e1; --accent: #a855f7; --border: rgba(255, 255, 255, 0.15);
+            --shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+            --modal-overlay: rgba(0, 0, 0, 0.8);
+            background-image: url('https://images.unsplash.com/photo-1464802686167-b939a6910659?auto=format&fit=crop&q=80&w=1920');
+            background-attachment: fixed; background-size: cover;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); transition: background 0.3s; }
+
+        /* Auth Logic Classes */
+        .logged-in-only { display: none; }
+        .guest-only { display: block; }
+        body.is-logged-in .logged-in-only { display: block; }
+        body.is-logged-in .guest-only { display: none; }
+
+        /* Navigation */
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1rem 5%; background: var(--card-bg); border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(12px);
+        }
+        .nav-right { display: flex; gap: 15px; align-items: center; }
+        .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--accent); text-decoration: none; }
+        
+        /* Layout Grid */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed; inset: 0; background: var(--modal-overlay);
+            display: none; align-items: center; justify-content: center; z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+        .modal {
+            background: var(--card-bg); padding: 30px; border-radius: 20px;
+            width: 100%; max-width: 400px; border: 1px solid var(--border);
+            box-shadow: var(--shadow); position: relative;
+        }
+        .modal-close { position: absolute; top: 20px; right: 20px; cursor: pointer; border: none; background: none; color: var(--text); font-size: 1.2rem; }
+
+        /* Buttons & Forms */
+        .btn { padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; }
+        input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+
+        /* Deal Card Enhancements */
+        .deal-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; position: relative; box-shadow: var(--shadow); }
+        .deal-content { padding: 20px; }
+        .deal-actions { 
+            display: flex; gap: 15px; padding: 15px 20px; border-top: 1px solid var(--border);
+            background: rgba(0,0,0,0.02);
+        }
+        .action-link { text-decoration: none; color: var(--text-muted); font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .action-link:hover { color: var(--accent); }
+        .btn-delete { color: #ef4444 !important; margin-left: auto; }
+
+        /* Sidebar Ranking */
+        .sidebar-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; position: sticky; top: 100px; }
+        .ranking-item { display: flex; align-items: center; gap: 12px; margin-top: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+        .rank-num { font-family: 'Space Grotesk'; font-size: 1.2rem; font-weight: 800; color: var(--accent); opacity: 0.5; }
+
+        @media (max-width: 900px) {
+            .main-layout { grid-template-columns: 1fr; }
+            .sidebar-box { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Auth Modal -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal">
+            <button class="modal-close" onclick="toggleModal('authModal')">&times;</button>
+            <h2 style="margin-bottom: 20px;">Welcome to OrbitDeals</h2>
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" placeholder="astronaut@nasa.gov">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" placeholder="••••••••">
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="simLogin()">Sign In</button>
+            <p style="text-align: center; margin-top: 15px; font-size: 0.8rem; color: var(--text-muted);">
+                Don't have an account? <a href="#" style="color: var(--accent);">Sign Up</a>
+            </p>
+        </div>
+    </div>
+
+    <nav>
+        <a href="#" class="logo">OrbitDeals</a>
+        <div class="nav-right">
+            <select class="btn btn-outline" id="themeSelect">
+                <option value="light">☀️ Light</option>
+                <option value="dark">🌙 Dark</option>
+                <option value="cosmic">🚀 Cosmic</option>
+            </select>
+            
+            <div class="guest-only">
+                <button class="btn btn-primary" onclick="toggleModal('authModal')">Login</button>
+            </div>
+            <div class="logged-in-only">
+                <span style="margin-right: 10px; font-size: 0.9rem;">Hi, <b>Major Tom</b> 👋</span>
+                <button class="btn btn-outline" onclick="simLogout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-layout">
+        <!-- Main Feed -->
+        <main>
+            <header style="margin-bottom: 30px;">
+                <h1 style="font-size: 2.5rem; font-family: 'Space Grotesk';">Trending Promotions</h1>
+                <p style="color: var(--text-muted);">Community curated deals from across the web.</p>
+                <button class="btn btn-primary" style="margin-top: 15px;" onclick="requireAuth()">+ Post New Offer</button>
+            </header>
+
+            <div class="deal-grid" style="display: grid; gap: 20px;">
+                <!-- Deal Card 1 -->
+                <div class="deal-card">
+                    <div class="deal-content">
+                        <div style="display: flex; justify-content: space-between;">
+                            <h3 class="deal-title">RTX 4080 Super - Founders Edition</h3>
+                            <span style="color: #f59e0b; font-weight: 800;">★ 4.9</span>
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <span style="font-size: 1.5rem; font-weight: 800; color: var(--accent);">$999</span>
+                            <span style="text-decoration: line-through; color: var(--text-muted); margin-left: 10px;">$1,199</span>
+                        </div>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Best price seen this year. Available at NVIDIA store.</p>
+                    </div>
+                    <div class="deal-actions">
+                        <span class="action-link" onclick="requireAuth()">▲ Vote</span>
+                        <span class="action-link" onclick="requireAuth()">💬 12 Comments</span>
+                        <span class="action-link logged-in-only btn-delete" onclick="this.closest('.deal-card').remove()">Delete</span>
+                    </div>
+                </div>
+
+                <!-- Deal Card 2 -->
+                <div class="deal-card">
+                    <div class="deal-content">
+                        <div style="display: flex; justify-content: space-between;">
+                            <h3 class="deal-title">Starfield: Premium Edition (PC/Xbox)</h3>
+                            <span style="color: #f59e0b; font-weight: 800;">★ 4.2</span>
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <span style="font-size: 1.5rem; font-weight: 800; color: var(--accent);">$45</span>
+                            <span style="text-decoration: line-through; color: var(--text-muted); margin-left: 10px;">$99</span>
+                        </div>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Global Steam Key on sale for the next 24 hours.</p>
+                    </div>
+                    <div class="deal-actions">
+                        <span class="action-link" onclick="requireAuth()">▲ Vote</span>
+                        <span class="action-link" onclick="requireAuth()">💬 89 Comments</span>
+                        <span class="action-link logged-in-only btn-delete" onclick="this.closest('.deal-card').remove()">Delete</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Sidebar Ranking -->
+        <aside>
+            <div class="sidebar-box">
+                <h3 style="font-family: 'Space Grotesk'; margin-bottom: 20px;">✨ Star Chart (Top Rated)</h3>
+                
+                <div class="ranking-item">
+                    <span class="rank-num">01</span>
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.9rem;">MacBook M3 Pro</div>
+                        <div style="font-size: 0.8rem; color: #10b981;">+2,450 points</div>
+                    </div>
+                </div>
+
+                <div class="ranking-item">
+                    <span class="rank-num">02</span>
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.9rem;">Sony PS5 Slim Bundle</div>
+                        <div style="font-size: 0.8rem; color: #10b981;">+1,820 points</div>
+                    </div>
+                </div>
+
+                <div class="ranking-item">
+                    <span class="rank-num">03</span>
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.9rem;">NordVPN 2-Year Plan</div>
+                        <div style="font-size: 0.8rem; color: #10b981;">+1,105 points</div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-outline" style="width: 100%; margin-top: 20px; font-size: 0.8rem;">View Full Leaderboard</button>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        // Theme Logic
+        const themeSelect = document.getElementById('themeSelect');
+        const body = document.body;
+
+        themeSelect.addEventListener('change', (e) => {
+            body.setAttribute('data-theme', e.target.value);
+        });
+
+        // Auth Logic (Simulated)
+        let isLoggedIn = false;
+
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function simLogin() {
+            isLoggedIn = true;
+            body.classList.add('is-logged-in');
+            toggleModal('authModal');
+            alert("Logged in successfully as Major Tom!");
+        }
+
+        function simLogout() {
+            isLoggedIn = false;
+            body.classList.remove('is-logged-in');
+            alert("Logged out.");
+        }
+
+        function requireAuth() {
+            if (!isLoggedIn) {
+                toggleModal('authModal');
+            } else {
+                alert("Action successful! (Comment/Vote added)");
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.className === 'modal-overlay') {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
