@@ -17,6 +17,27 @@ interface Deal {
   comments_count: number;
 }
 
+const PLACEHOLDER_DEALS: Deal[] = [
+  {
+    id: "p1",
+    title: "RTX 4080 Super - Founders Edition",
+    description: "Best price seen this year. Available at NVIDIA store.",
+    price: "$999",
+    original_price: "$1,199",
+    votes_count: 50,
+    comments_count: 12
+  },
+  {
+    id: "p2",
+    title: "Starfield: Premium Edition (PC/Xbox)",
+    description: "Global Steam Key on sale for the next 24 hours.",
+    price: "$45",
+    original_price: "$99",
+    votes_count: 35,
+    comments_count: 89
+  }
+];
+
 export default function Home() {
   const { user } = useAuth();
   const [deals, setDeals] = useState<Deal[]>([]);
@@ -28,7 +49,12 @@ export default function Home() {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (data) setDeals(data);
+      if (data && data.length > 0) {
+        setDeals(data);
+      } else {
+        // Fallback to placeholders if DB is empty
+        setDeals(PLACEHOLDER_DEALS);
+      }
     }
 
     fetchDeals();
@@ -57,23 +83,18 @@ export default function Home() {
         </header>
 
         <div className="grid gap-5">
-          {deals.length === 0 ? (
-            <div className="text-center py-10 text-[var(--text-muted)]">
-              <p>No deals found. Be the first to post one!</p>
-            </div>
-          ) : (
-            deals.map((deal) => (
-              <DealCard
-                key={deal.id}
-                title={deal.title}
-                rating={4.5} // Placeholder rating logic
-                price={deal.price}
-                originalPrice={deal.original_price}
-                description={deal.description}
-                comments={deal.comments_count}
-              />
-            ))
-          )}
+          {deals.map((deal) => (
+            <DealCard
+              key={deal.id}
+              title={deal.title}
+              // Simple heuristic for rating based on title for the placeholders, default 4.5 otherwise
+              rating={deal.title.includes("RTX") ? 4.9 : deal.title.includes("Starfield") ? 4.2 : 4.5}
+              price={deal.price.toString().startsWith('$') ? deal.price : `$${deal.price}`}
+              originalPrice={deal.original_price.toString().startsWith('$') ? deal.original_price : `$${deal.original_price}`}
+              description={deal.description}
+              comments={deal.comments_count}
+            />
+          ))}
         </div>
       </main>
 
