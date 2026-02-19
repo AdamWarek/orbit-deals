@@ -1,0 +1,9 @@
+1:"$Sreact.fragment"
+2:I[47257,["/orbit-deals/_next/static/chunks/ff1a16fafef87110.js","/orbit-deals/_next/static/chunks/d2be314c3ece3fbe.js"],"ClientPageRoot"]
+3:I[52683,["/orbit-deals/_next/static/chunks/df78968237dde09b.js","/orbit-deals/_next/static/chunks/3ca9fae145765d94.js","/orbit-deals/_next/static/chunks/670c4c4543925938.js"],"default"]
+6:I[97367,["/orbit-deals/_next/static/chunks/ff1a16fafef87110.js","/orbit-deals/_next/static/chunks/d2be314c3ece3fbe.js"],"OutletBoundary"]
+7:"$Sreact.suspense"
+0:{"buildId":"8Qj30qTAvbDCi-Cv88DBJ","rsc":["$","$1","c",{"children":[["$","$L2",null,{"Component":"$3","serverProvidedParams":{"searchParams":{},"params":{},"promises":["$@4","$@5"]}}],[["$","script","script-0",{"src":"/orbit-deals/_next/static/chunks/670c4c4543925938.js","async":true}]],["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],"loading":null,"isPartial":false}
+4:{}
+5:"$0:rsc:props:children:0:props:serverProvidedParams:params"
+8:null
