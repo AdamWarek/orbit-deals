@@ -13,7 +13,7 @@ interface DealCardProps {
 
 export default function DealCard({ title, price, originalPrice, rating, description, comments }: DealCardProps) {
     return (
-        <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card-bg)] shadow-sm transition hover:shadow-md">
+        <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card-bg)] shadow-sm backdrop-blur-md transition-all duration-300 hover:border-[var(--accent)] hover:shadow-[var(--shadow)]">
             <div className="p-5">
                 <div className="flex justify-between">
                     <h3 className="text-lg font-bold">{title}</h3>

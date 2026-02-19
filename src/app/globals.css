@@ -3,6 +3,18 @@
 @tailwind utilities;
 
 :root {
+  /* Nebula Glass Theme (Default) */
+  --bg: #030712;
+  --card-bg: rgba(30, 41, 59, 0.4); /* Translucent dark blue */
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent: #22d3ee; /* Cyan Neon */
+  --border: rgba(255, 255, 255, 0.1);
+  --shadow: 0 0 15px rgba(34, 211, 238, 0.15);
+}
+
+/* Light Mode Override */
+[data-theme="light"] {
   --bg: #f8fafc;
   --card-bg: #ffffff;
   --text: #0f172a;
@@ -12,31 +24,14 @@
   --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
 }
 
-[data-theme="dark"] {
-  --bg: #0f172a;
-  --card-bg: #1e293b;
-  --text: #f8fafc;
-  --text-muted: #94a3b8;
-  --accent: #38bdf8;
-  --border: #334155;
-  --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
-}
-
-[data-theme="cosmic"] {
-  --bg: #05070a;
-  --card-bg: rgba(255, 255, 255, 0.07);
-  --text: #ffffff;
-  --text-muted: #cbd5e1;
-  --accent: #a855f7;
-  --border: rgba(255, 255, 255, 0.15);
-  --shadow: 0 0 20px rgba(168, 85, 247, 0.2);
-}
-
 body {
   background-color: var(--bg);
+  background-image: radial-gradient(circle at 50% 0%, #1e1b4b, var(--bg)); /* Deep blue glow at top */
+  background-attachment: fixed;
   color: var(--text);
   font-family: Arial, Helvetica, sans-serif;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, color 0.3s;
+  min-height: 100vh;
 }
 
 @layer utilities {

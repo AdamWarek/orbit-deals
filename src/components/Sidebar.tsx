@@ -1,7 +1,7 @@
 export default function Sidebar() {
     return (
         <aside className="hidden w-[320px] lg:block">
-            <div className="sticky top-[100px] rounded-2xl border border-[var(--border)] bg-[var(--card-bg)] p-5">
+            <div className="sticky top-[100px] rounded-2xl border border-[var(--border)] bg-[var(--card-bg)] p-5 backdrop-blur-md">
                 <h3 className="mb-5 font-['Space_Grotesk'] text-lg font-bold">✨ Star Chart (Top Rated)</h3>
 
                 <div className="flex flex-col gap-4">
@@ -24,7 +24,7 @@ function RankingItem({ rank, name, points }: { rank: string; name: string; point
             <span className="font-['Space_Grotesk'] text-xl font-bold text-[var(--accent)] opacity-50">{rank}</span>
             <div>
                 <div className="text-sm font-semibold">{name}</div>
-                <div className="text-xs text-emerald-500">{points} points</div>
+                <div className="text-xs text-cyan-400">{points} points</div>
             </div>
         </div>
     )
